@@ -11,33 +11,28 @@ stage3:
     mov ebp, 0x90000 ; Set up a basic stack
     mov esp, ebp
 
-    mov BYTE [0xB8000], 'H' ; Do something 32 bit to make sure we are in PM
+page_table equ 0x03
+mapping_2m equ 0x83
 
 enter_lm:
-    mov edi, 0x1000
-    mov cr3, edi
-    xor eax, eax
-    mov ecx, 0x1000
-    rep stosd
-    mov edi, cr3
+    mov eax, 0x1000
+    mov WORD [eax], page_table | 0x2000
+    mov WORD [0x1FF8], page_table | 0x2000
+    mov cr3, eax
+    mov WORD [0x2000], page_table | 0x3000
+    mov WORD [0x2008], page_table | 0x4000
+    mov WORD [0x2FF0], page_table | 0x3000
+    mov WORD [0x2FF8], page_table | 0x4000
 
-    mov DWORD [edi], 0x2003
-    add edi, 0x1000
-    
-    mov DWORD [edi], 0x3003
-    add edi, 0x1000
-
-    mov DWORD [edi], 0x4003
-    add edi, 0x1000
-
-    mov ebx, 0x3
-    mov ecx, 0x200
-
-.set_entry:
-    mov DWORD [edi], ebx
-    add ebx, 0x1000
-    add edi, 8
-    loop .set_entry
+    mov di, 0x3000
+    xor ax, ax
+    mov cx, 0x400
+.loop:
+    mov BYTE [di], mapping_2m
+    mov WORD [di + 3], ax
+    add di, 8
+    add ax, 2
+    loop .loop
 
     mov eax, cr4
     or eax, 1 << 5

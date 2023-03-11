@@ -1,6 +1,6 @@
 dap:          db 16
               db 0
-.num_blocks:  dw 3
+.num_blocks:  dw 12
 .buffer_addr: dd 0x7E00
 .start_lba:   dq 1
 
