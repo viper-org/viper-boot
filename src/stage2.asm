@@ -12,7 +12,7 @@ stage2:
 
 enter_pm:
     cli
-    lgdt [gdtr]
+    lgdt [gdtr32]
     mov eax, cr0
     or al, 1
     mov cr0, eax
@@ -21,7 +21,7 @@ enter_pm:
 
 %include "real_mode_print.inc"
 %include "a20.inc"
-%include "gdt.inc"
+%include "gdt32.inc"
 
 stage2_msg: db "Loaded stage 2 bootloader", 13, 10, 0
 

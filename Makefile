@@ -1,7 +1,7 @@
 AS=nasm
 ASFLAGS=-fbin -I./inc
 
-SRCS=src/stage1/boot.asm src/stage2/stage2.asm src/stage3/stage3.asm
+SRCS=src/stage1.asm src/stage2.asm src/stage3.asm src/stage4.asm
 
 BINS=${SRCS:.asm=.bin}
 

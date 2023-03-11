@@ -1,4 +1,4 @@
-gdt:
+gdt32:
     dd 0
     dd 0
 
@@ -17,6 +17,6 @@ gdt:
     db 0b11001111
     db 0
 
-gdtr:
-    dw $ - gdt - 1
-    dd gdt
+gdtr32:
+    dw $ - gdt32 - 1
+    dd gdt32
