@@ -1,0 +1,11 @@
+boot
+limine-efi
+ovmf
+*.o
+*.d
+*.a
+*.elf
+*.efi
+
+.cache
+compile_commands.json
