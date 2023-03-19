@@ -1,6 +1,7 @@
 boot
 limine-efi
 ovmf
+gnu-efi
 *.o
 *.d
 *.a

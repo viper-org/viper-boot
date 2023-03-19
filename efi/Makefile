@@ -64,8 +64,15 @@ override BUILD := build
 .PHONY: all
 all: $(TARGET) $(BUILD)
 
+gnu-efi:
+	git clone https://git.code.sf.net/p/gnu-efi/code gnu-efi/
+
 limine-efi:
 	git clone https://github.com/limine-bootloader/limine-efi.git
+
+libefi.a: $(gnu-efi)
+	make -C gnu-efi
+	cp gnu-efi/x86_64/lib/libefi.a .
 
 limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o: limine-efi
 	$(MAKE) -C limine-efi/gnuefi ARCH=x86_64
@@ -76,7 +83,7 @@ $(BUILD): build.cpp
 $(TARGET): $(ELF)
 	$(OBJCOPY) -O binary $< $@
 
-$(ELF): limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o $(OBJ)
+$(ELF): limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o libefi.a $(OBJ)
 	$(LD) $^ $(LDFLAGS) -o $@
 
 -include $(HEADER_DEPS)
@@ -89,4 +96,4 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	rm -rf limine-efi ovmf
+	rm -rf limine-efi ovmf gnu-efi
