@@ -70,7 +70,7 @@ gnu-efi:
 limine-efi:
 	git clone https://github.com/limine-bootloader/limine-efi.git
 
-libefi.a: $(gnu-efi)
+libefi.a: gnu-efi
 	make -C gnu-efi
 	cp gnu-efi/x86_64/lib/libefi.a .
 
