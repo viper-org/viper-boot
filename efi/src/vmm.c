@@ -50,5 +50,5 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
 
     pml1[pml1i] = PhysAddr | Flags | PRESENT_WRITABLE;
 
-    Print(L"%x", pml1[pml1i] & 0xFFF);
+    Print(L"%x         %x", pml1[pml1i] & ~0xFFF, PhysAddr);
 }
