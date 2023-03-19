@@ -24,12 +24,12 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
     if(!(pml4[pml4i] & 0x1))
     {
         BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (EFI_PHYSICAL_ADDRESS*)pml4[pml4i]);
+        Print(L"q");
         pml4[pml4i] &= ~0xFFF;
         SetMem((void*)pml4[pml4i], PAGE_SIZE, 0);
         pml4[pml4i] |= PRESENT_WRITABLE;
     }
     pml3 = (UINT64*)pml4[pml4i];
-        Print(L"q");
 
     if(!(pml3[pml3i] & 0x1))
     {
