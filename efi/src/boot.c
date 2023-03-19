@@ -20,7 +20,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 
     Print(L"%d\n%d\n", Kernel.Start, Kernel.End);
 
-    for(UINT64 i = Kernel.Start; i < Kernel.End; i++)
+    for(UINT64 i = Kernel.Start; i < Kernel.End; i += 4096)
         VMMMapPage(i, i, 3);
 
     UINTN MapSize = 0, MapKey, DescSize;
