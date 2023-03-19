@@ -6,6 +6,11 @@ UINT64* pml4;
 #define PAGE_SIZE 4096
 #define PRESENT_WRITABLE 0x3
 
+void VMMInit()
+{
+    BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, pml4);
+}
+
 void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
 {
     PhysAddr &= ~0xFFF;
