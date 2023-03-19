@@ -18,8 +18,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 
     KMain KernelEntry = (KMain)Kernel.EntryPoint;
 
-    Print(L"%d\n%d\n", Kernel.Start, Kernel.End);
-
+    VMMInit();
     for(UINT64 i = Kernel.Start; i < Kernel.End; i += 4096)
         VMMMapPage(i, i, 0);
 
