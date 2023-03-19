@@ -3,6 +3,7 @@
 #include <bootInfo.h>
 #include <file.h>
 #include <elf.h>
+#include <vmm.h>
 
 extern VBInfo GetBootInfo();
 typedef void(*KMain)(VBInfo*);
@@ -16,6 +17,8 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     KernelInfo Kernel = ParseKernel(Buffer);
 
     KMain KernelEntry = (KMain)Kernel.EntryPoint;
+
+    VMMMapPage(0, 0, 3);
 
     UINTN MapSize = 0, MapKey, DescSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap = NULL;
