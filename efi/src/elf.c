@@ -1,22 +1,26 @@
 #include <elf.h>
+#include <linux/elf.h>
 
-EFI_PHYSICAL_ADDRESS ParseKernel(UINT8* Buffer)
+KernelInfo ParseKernel(UINT8* Buffer)
 {
-    UINT8* Header = Buffer + Buffer[0x20];
-    UINT8  HeaderSize = Buffer[0x36];
-    for(UINT8 i = 0; i < Buffer[0x38]; i++, Header += HeaderSize)
+    Elf64_Ehdr* EHeader = (Elf64_Ehdr*)Buffer;
+    Elf64_Phdr* PHeader = (Elf64_Phdr*)(Buffer + EHeader->e_phoff);
+    EFI_PHYSICAL_ADDRESS KernelStart = PHeader->p_vaddr;
+    EFI_PHYSICAL_ADDRESS KernelEnd = KernelStart;
+    for(UINT32 i = 0; i < EHeader->e_phnum; i++, PHeader++)
     {
-        if(Header[0x0] != 1)
+        if(PHeader->p_type != PT_LOAD)
             continue;
         
-        UINT8* VirtualAddr  = (UINT8*)*(UINT64*)(Header + 0x10);
-        UINT8* HeaderOffset = Buffer + Header[0x8];
-        for(UINT64 j = 0; j < Header[0x20]; j++)
+        UINT8* VirtualAddr = (UINT8*)PHeader->p_vaddr;
+        UINT8* HeaderOffset = (UINT8*)EHeader + PHeader->p_offset;
+        for(UINT64 j = 0; j < PHeader->p_filesz; j++)
             *(VirtualAddr + j) = *(HeaderOffset + j);
-
-        VirtualAddr += Header[0x20];
-        for(UINT64 j = 0; j < Header[0x28] - Header[0x20]; j++)
+        
+        VirtualAddr += PHeader->p_filesz;
+        KernelEnd += PHeader->p_memsz;
+        for(UINT64 j = 0; j < PHeader->p_memsz - PHeader->p_filesz; j++)
             *(VirtualAddr + j) = 0;
     }
-    return *(UINT64*)(Buffer + 0x18);
+    return (KernelInfo){EHeader->e_entry, KernelStart, KernelEnd};
 }

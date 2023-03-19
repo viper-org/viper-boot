@@ -14,7 +14,7 @@ $(eval $(call DEFAULT_VAR,CC,cc))
 $(eval $(call DEFAULT_VAR,LD,ld))
 $(eval $(call DEFAULT_VAR,OBJCOPY,objcopy))
 
-CFLAGS ?= -g -O2 -pipe -Wall -Wextra
+CFLAGS ?= -g -O0 -pipe -Wall -Wextra
 LDFLAGS ?=
 
 override LDFLAGS +=                        \
@@ -58,16 +58,20 @@ override OBJ := $(CFILES:.c=.o)
 override HEADER_DEPS := $(CFILES:.c=.d)
 
 override ELF := viperBoot.elf
-override TARGET := viperBoot.efi
+override TARGET := BOOTX64.EFI
+override BUILD := build
 
 .PHONY: all
-all: $(TARGET)
+all: $(TARGET) $(BUILD)
 
 limine-efi:
 	git clone https://github.com/limine-bootloader/limine-efi.git
 
 limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o: limine-efi
 	$(MAKE) -C limine-efi/gnuefi ARCH=x86_64
+
+$(BUILD): build.cpp
+	g++ -std=c++20 $< -o $@
 
 $(TARGET): $(ELF)
 	$(OBJCOPY) -O binary $< $@
@@ -78,18 +82,6 @@ $(ELF): limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o $(O
 -include $(HEADER_DEPS)
 %.o: %.c limine-efi
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
-
-ovmf:
-	mkdir -p ovmf
-	cd ovmf && curl -o OVMF-X64.zip https://efi.akeo.ie/OVMF/OVMF-X64.zip && unzip OVMF-X64.zip
-
-.PHONY: run
-run: all ovmf
-	mkdir -p boot/EFI/BOOT
-	cp kernel.elf boot/
-	cp $(TARGET) boot/EFI/BOOT/BOOTX64.EFI
-	qemu-system-x86_64 -M smm=off -d int -net none -M q35 -drive file=fat:rw:boot -bios ovmf/OVMF.fd
-	rm -rf boot
 
 .PHONY: clean
 clean:

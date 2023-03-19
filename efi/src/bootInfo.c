@@ -49,6 +49,8 @@ VBInfo GetBootInfo()
 {
     VBInfo Info;
 
+    Info.Magic = 0x17B002;
+
     EFI_GRAPHICS_OUTPUT_PROTOCOL* GOP = GetGOP();
 
     Info.Framebuffer.Base = (UINT32*)GOP->Mode->FrameBufferBase;
@@ -56,6 +58,8 @@ VBInfo GetBootInfo()
     Info.Framebuffer.Horiz = GOP->Mode->Info->HorizontalResolution;
     Info.Framebuffer.Vert = GOP->Mode->Info->VerticalResolution;
     Info.Framebuffer.Pitch = 4 * GOP->Mode->Info->PixelsPerScanLine;
+
+    
 
     return Info;
 }
