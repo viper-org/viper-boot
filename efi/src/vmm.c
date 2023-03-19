@@ -4,6 +4,7 @@
 UINT64* pml4;
 
 #define PAGE_SIZE 4096
+#define PRESENT_WRITABLE 0x3
 
 void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
 {
@@ -25,7 +26,7 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
         BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (EFI_PHYSICAL_ADDRESS*)pml4[pml4i]);
         pml4[pml4i] &= ~0xFFF;
         SetMem((void*)pml4[pml4i], PAGE_SIZE, 0);
-        pml4[pml4i] |= 3;
+        pml4[pml4i] |= PRESENT_WRITABLE;
     }
     pml3 = (UINT64*)pml4[pml4i];
 
@@ -34,7 +35,7 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
         BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (EFI_PHYSICAL_ADDRESS*)pml3[pml3i]);
         pml3[pml3i] &= ~0xFFF;
         SetMem((void*)pml3[pml3i], PAGE_SIZE, 0);
-        pml3[pml3i] |= 3;
+        pml3[pml3i] |= PRESENT_WRITABLE;
     }
     pml2 = (UINT64*)pml3[pml3i];
 
@@ -43,10 +44,10 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
         BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (EFI_PHYSICAL_ADDRESS*)pml2[pml2i]);
         pml2[pml2i] &= ~0xFFF;
         SetMem((void*)pml2[pml2i], PAGE_SIZE, 0);
-        pml2[pml2i] |= 3;
+        pml2[pml2i] |= PRESENT_WRITABLE;
     }
     pml1 = (UINT64*)pml2[pml2i];
 
-    pml1[pml1i] = PhysAddr | Flags;
+    pml1[pml1i] = PhysAddr | Flags | PRESENT_WRITABLE;
     Print(L"test");
 }
