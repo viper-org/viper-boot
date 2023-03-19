@@ -29,6 +29,7 @@ void VMMMapPage(UINT64 PhysAddr, UINT64 VirtAddr, UINT64 Flags)
         pml4[pml4i] |= PRESENT_WRITABLE;
     }
     pml3 = (UINT64*)pml4[pml4i];
+        Print(L"q");
 
     if(!(pml3[pml3i] & 0x1))
     {
