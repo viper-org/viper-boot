@@ -16,7 +16,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     VBInfo BootInfo = GetBootInfo();
     KernelInfo Kernel = ParseKernel(Buffer);
 
-    KMain KernelEntry = (KMain)Kernel.EntryPoint;
+    KMain KernelEntry = (KMain)Kernel.EntryPoint + 0xFFFF800000000000;
 
     //VMMInit();
     //for(UINT64 i = Kernel.Start; i < Kernel.End; i += 4096)
