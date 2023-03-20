@@ -13,9 +13,9 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 {
     InitializeLib(ImageHandle, SystemTable);
 
-    UINT8* Buffer = ReadFile(ImageHandle, L"kernel.elf").Buffer;
+    File f = ReadFile(ImageHandle, L"kernel.elf");
     VBInfo BootInfo = GetBootInfo();
-    KernelInfo Kernel = ParseKernel(Buffer);
+    KernelInfo Kernel = ParseKernel(f.Buffer, f.Size);
 
     KMain KernelEntry = (KMain)Kernel.EntryPoint + 0xffffffff80000000;
 
