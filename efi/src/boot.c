@@ -16,7 +16,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     VBInfo BootInfo = GetBootInfo();
     KernelInfo Kernel = ParseKernel(Buffer);
 
-    KMain KernelEntry = (KMain)Kernel.EntryPoint + 0xFFFF800000000000;
+    KMain KernelEntry = (KMain)Kernel.EntryPoint + 0xffffffff80000000;
 
     //VMMInit();
     //for(UINT64 i = Kernel.Start; i < Kernel.End; i += 4096)
@@ -68,6 +68,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 
     SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
     VMMInit(&BootInfo);
+    VMMMapPages(Kernel.Start, Kernel.Start + 0xffffffff80000000, 3, NPAGES(Kernel.End - Kernel.Start));
 
     KernelEntry(&BootInfo);
 
