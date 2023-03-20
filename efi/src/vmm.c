@@ -14,7 +14,7 @@ void VMMInit(VBInfo* BootInfo)
     uint64_t tmp = (uint64_t)pml4;
     tmp &= ~0xFFFF000000000FFF;
     pml4 = (uint64_t*)tmp;
-    VMMMapPages(0, 0, 3, NPAGES(0x400000));
+    VMMMapPages(0, 0xFFFF800000000000, 3, NPAGES(0x400000));
     uint8_t* mmap_start = (uint8_t*)BootInfo->MemoryMap;
     uint8_t* mmap_end = (uint8_t*)mmap_start + BootInfo->MemoryMap->MapSize;
 
@@ -25,9 +25,9 @@ void VMMInit(VBInfo* BootInfo)
         if(entry->Base + entry->Size < 0x400000)
             continue;
 
-        VMMMapPages(entry->Base, entry->Base, 3, entry->Size / 4096);
+        VMMMapPages(entry->Base, entry->Base + 0xFFFF800000000000, 3, entry->Size / 4096);
     }
-    VMMMapPages((uint64_t)BootInfo->Framebuffer.Base, (uint64_t)BootInfo->Framebuffer.Base, 3, NPAGES(BootInfo->Framebuffer.Size));
+    VMMMapPages((uint64_t)BootInfo->Framebuffer.Base, (uint64_t)BootInfo->Framebuffer.Base + 0xFFFF800000000000, 3, NPAGES(BootInfo->Framebuffer.Size));
     asm volatile("mov %0, %%cr3" : : "r"(pml4));
 }
 
