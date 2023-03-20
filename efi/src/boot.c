@@ -4,6 +4,7 @@
 #include <file.h>
 #include <elf.h>
 #include <vmm.h>
+#include <pmm.h>
 
 extern VBInfo GetBootInfo();
 typedef void(*KMain)(VBInfo*);
