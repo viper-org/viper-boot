@@ -10,6 +10,6 @@ typedef struct
     EFI_PHYSICAL_ADDRESS End;
 } KernelInfo;
 
-KernelInfo ParseKernel(UINT8* Buffer);
+KernelInfo ParseKernel(UINT8* Buffer, UINT64 Size);
 
 #endif
