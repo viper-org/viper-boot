@@ -67,6 +67,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     }
 
     SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+    VMMInit(&BootInfo);
 
     KernelEntry(&BootInfo);
 
