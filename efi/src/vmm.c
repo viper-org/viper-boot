@@ -12,7 +12,7 @@ void VMMInit(VBInfo* BootInfo)
     pml4 = (uint64_t*)PMMGetPage();
     SetMem((uint8_t*)pml4, PAGE_SIZE, 0);
     uint64_t tmp = (uint64_t)pml4;
-    tmp &= ~0xFFFF000000000FFF;
+    tmp &= ~0xFFF;
     pml4 = (uint64_t*)tmp;
     VMMMapPages(0, 0xFFFF800000000000, 3, NPAGES(0x400000));
     uint8_t* mmap_start = (uint8_t*)BootInfo->MemoryMap;
@@ -33,7 +33,7 @@ void VMMInit(VBInfo* BootInfo)
 
 static inline uint64_t* Entry(uint64_t pt)
 {
-    return (uint64_t*)(pt & ~0xFFFF000000000FFF);
+    return (uint64_t*)(pt & ~0xFFF);
 }
 
 void VMMMapPage(uint64_t PhysAddr, uint64_t VirtAddr, uint16_t Flags)
@@ -57,12 +57,12 @@ void VMMMapPage(uint64_t PhysAddr, uint64_t VirtAddr, uint16_t Flags)
             pt[idx] = (uint64_t)PMMGetPage();
             SetMem((uint8_t*)Entry(pt[idx]), PAGE_SIZE, 0);
             pt[idx] |= 3;
-            pt[idx] &= ~0xFFFF000000000000;
+            pt[idx] |= 0xFFFF000000000000;
         }
         pt = Entry(pt[idx]);
     }
     pt[idx] = PhysAddr | Flags | 1;
-    pt[idx] &= ~0xFFFF000000000000;
+    pt[idx] |= 0xFFFF000000000000;
 }
 
 void VMMMapPages(uint64_t PhysAddr, uint64_t VirtAddr, uint16_t Flags, uint64_t Npages)
