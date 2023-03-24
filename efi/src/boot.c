@@ -68,6 +68,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     }
 
     SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+    PMMInit(BootInfo.MemoryMap);
     VMMInit(&BootInfo);
     VMMMapPages(Kernel.Start, Kernel.Start + 0xffffffff80000000, 3, NPAGES(Kernel.End - Kernel.Start));
 
