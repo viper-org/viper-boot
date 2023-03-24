@@ -5,8 +5,7 @@ KernelInfo ParseKernel(UINT8* Buffer, UINT64 Size)
 {
     Elf64_Ehdr* EHeader = (Elf64_Ehdr*)Buffer;
     Elf64_Phdr* PHeader = (Elf64_Phdr*)(Buffer + EHeader->e_phoff);
-    void* KernelLocation;
-    BS->AllocatePool(EfiConventionalMemory, Size, KernelLocation);
+    void* KernelLocation = (void*)0x200000;
     EFI_PHYSICAL_ADDRESS KernelStart = KernelLocation;
     EFI_PHYSICAL_ADDRESS KernelEnd = KernelLocation + Size;
     for(UINT32 i = 0; i < EHeader->e_phnum; i++, PHeader++)
