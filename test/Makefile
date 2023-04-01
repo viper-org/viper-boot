@@ -28,7 +28,7 @@ $(KERNEL): $(OBJS)
 
 $(TARGET): $(KERNEL) loader
 	cp ../BOOTX64.EFI ../build ./
-	./build test.txt
+	./build $<
 
 .PHONY: run clean distclean
 run: $(TARGET) ovmf

@@ -1,18 +1,32 @@
 #include <efi/efi.h>
 #include <lib.h>
 #include <file.h>
+#include <elf.h>
+
+typedef void(*EntryPoint)();
 
 EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {
     ST = SystemTable;
     BS = SystemTable->BootServices;
     RS = SystemTable->RuntimeServices;
-    
-    FILE f = ReadFile(ImageHandle, L"test.txt");
-    CHAR16 buffer[f.Size];
-    for(UINTN i = 0; i < f.Size; i++)
-        buffer[i] = f.Buffer[i];
-    
-    ST->ConOut->OutputString(ST->ConOut, buffer);
+
+    FILE KernelFile = ReadFile(ImageHandle, L"kernel.elf");
+    KernelInfo Kernel = ParseKernel(KernelFile);
+    EntryPoint KernelEntry = (EntryPoint)Kernel.EntryPoint;
+
+    UINTN MapSize = 0, MapKey, DescSize;
+    EFI_MEMORY_DESCRIPTOR* MemoryMap = NULL;
+    UINT32 DescVers;
+    SystemTable->BootServices->GetMemoryMap(&MapSize, MemoryMap, NULL, &DescSize, NULL);
+
+    MapSize += DescSize * 2;
+
+    SystemTable->BootServices->AllocatePool(EfiLoaderData, MapSize, (void**)&MemoryMap);
+    SystemTable->BootServices->GetMemoryMap(&MapSize, MemoryMap, &MapKey, &DescSize, &DescVers);
+
+    SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+
+    KernelEntry();
     for(;;);
 }
