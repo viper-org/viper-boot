@@ -1,6 +1,10 @@
 limine-efi/
+.cache/
 
 *.EFI
 *.elf
+*.o
+*.d
+*.json
 
 build

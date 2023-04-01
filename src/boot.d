@@ -1,1 +1,1 @@
-src/boot.o: src/boot.c
+src/boot.o: src/boot.c include/lib.h include/file.h
