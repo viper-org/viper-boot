@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 int main(int argc, char** argv)
 {
@@ -16,13 +17,23 @@ int main(int argc, char** argv)
     system("mmd -i fat.img ::/EFI");
 	system("mmd -i fat.img ::/EFI/BOOT");
 	system("mcopy -i fat.img BOOTX64.EFI ::/EFI/BOOT/BOOTX64.EFI");
-    std::string cmd = "mcopy -i fat.img ";
-    cmd += argv[1];
-    cmd += " ::";
-	system(cmd.data());
+    //std::string cmd = "mcopy -i fat.img ";
+    //cmd += argv[1];
+    //cmd += " ::";
+	//system(cmd.data());
+    std::filesystem::path p = argv[1];
+    std::filesystem::recursive_directory_iterator it = std::filesystem::recursive_directory_iterator(p);
+    for(const std::filesystem::path& entry : it)
+    {
+        std::string cmd = "mcopy -i fat.img ";
+        cmd += entry.string();
+        cmd += " ::";
+        system(cmd.data());
+        std::cout << cmd << "\n";
+    }
     if(outFile != "fat.img")
     {
-        cmd = "mv fat.img " + outFile;
+        std::string cmd = "mv fat.img " + outFile;
         system(cmd.data());
     }   
     return 0;

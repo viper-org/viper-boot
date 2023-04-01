@@ -28,7 +28,9 @@ $(KERNEL): $(OBJS)
 
 $(TARGET): $(KERNEL) loader
 	cp ../BOOTX64.EFI ../build ./
-	./build $<
+	mkdir -p boot
+	cp ./viper.cfg $< boot/
+	./build boot
 
 .PHONY: run clean distclean
 run: $(TARGET) ovmf

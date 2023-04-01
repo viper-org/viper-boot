@@ -2,6 +2,7 @@
 #include <lib.h>
 #include <file.h>
 #include <elf.h>
+#include <config.h>
 
 typedef void(*EntryPoint)();
 
@@ -11,7 +12,10 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     BS = SystemTable->BootServices;
     RS = SystemTable->RuntimeServices;
 
-    FILE KernelFile = ReadFile(ImageHandle, L"kernel.elf");
+    FILE ConfigFile = ReadFile(ImageHandle, L"viper.cfg");
+    ConfigInfo cfg = ParseCfg(ConfigFile);
+
+    FILE KernelFile = ReadFile(ImageHandle, cfg.KernelPath);
     KernelInfo Kernel = ParseKernel(KernelFile);
     EntryPoint KernelEntry = (EntryPoint)Kernel.EntryPoint;
 

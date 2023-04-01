@@ -1,4 +1,5 @@
 ovmf/
+boot/
 
 *.EFI
 *.elf
