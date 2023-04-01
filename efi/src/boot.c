@@ -1,5 +1,5 @@
-#include <efi.h>
-#include <efilib.h>
+#include <efi/efi.h>
+#include <efi/efilib.h>
 #include <bootInfo.h>
 #include <file.h>
 #include <elf.h>

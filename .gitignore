@@ -1,0 +1,6 @@
+limine-efi/
+
+*.EFI
+*.elf
+
+build

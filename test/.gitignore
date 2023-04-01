@@ -1,0 +1,6 @@
+ovmf/
+
+*.EFI
+*.elf
+*.img
+*.o
