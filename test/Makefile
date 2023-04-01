@@ -1,11 +1,15 @@
+CC=gcc
+CFLAGS=-nostdlib -ffreestanding
+
 AS=nasm
 ASFLAGS=-felf64
 
 LD=x86_64-elf-ld
 LDFLAGS=-nostdlib
 
+CSRCS=$(shell find . -name '*.c')
 ASSRCS=$(shell find . -name '*.asm')
-OBJS:=${ASSRCS:.asm=.o}
+OBJS:=${CSRCS:.c=.o} ${ASSRCS:.asm=.o}
 
 KERNEL=kernel.elf
 TARGET=fat.img
@@ -19,6 +23,9 @@ loader:
 ovmf:
 	mkdir -p $@
 	cd ovmf && curl -Lo OVMF-X64.zip https://efi.akeo.ie/OVMF/OVMF-X64.zip && unzip OVMF-X64.zip
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.asm
 	$(AS) $(ASFLAGS) $< -o $@
