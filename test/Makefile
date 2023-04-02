@@ -1,11 +1,11 @@
 CC=x86_64-elf-gcc
-CFLAGS=-nostdlib -ffreestanding -I. -O2
+CFLAGS=-nostdlib -ffreestanding -I. -O2 -mno-red-zone -mno-sse -mno-sse2 -mno-80387 -mcmodel=kernel
 
 AS=nasm
 ASFLAGS=-felf64
 
 LD=x86_64-elf-ld
-LDFLAGS=-nostdlib -Tlink.ld -zmax-page-size=0x1000
+LDFLAGS=-nostdlib -Tlink.ld -zmax-page-size=0x1000 -static --no-dynamic-linker
 
 CSRCS=$(shell find . -name '*.c')
 ASSRCS=$(shell find . -name '*.asm')
