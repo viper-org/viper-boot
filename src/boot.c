@@ -3,6 +3,8 @@
 #include <file.h>
 #include <elf.h>
 #include <config.h>
+#include <mm/pmm.h>
+#include <mm/vmm.h>
 
 typedef void(*EntryPoint)();
 
@@ -31,6 +33,12 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     SystemTable->BootServices->GetMemoryMap(&MapSize, MemoryMap, &MapKey, &DescSize, &DescVers);
 
     SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+
+    PMMInit(MemoryMap, MapSize, DescSize);
+    VMMInit(MemoryMap, MapSize, DescSize, Kernel.Start, Kernel.End);
+
+    void* KernelStack = PMMGetPage();
+    asm volatile("mov %0, %%rsp" : : "m"(KernelStack));
 
     KernelEntry();
     for(;;);

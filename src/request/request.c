@@ -1,8 +1,8 @@
 #include <request/request.h>
+#include <request/framebuffer.h>
 #include <lib.h>
 #include <file.h>
 #include <viper.h>
-#include <request/framebuffer.h>
 
 struct ViperModule* modules = NULL;
 uint8_t moduleCount = 0;
@@ -15,14 +15,18 @@ void ParseRequest(void* requestAddr)
         case VIPER_BOOT_INFO_MAGIC:
         {
             struct ViperBootInfoRequest* req = (struct ViperBootInfoRequest*)requestAddr;
-            BS->AllocatePool(EfiLoaderData, sizeof(struct ViperBootInfoResponse), (void**)req->response);
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperBootInfoResponse), (void**)req->response);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error");
             req->response->version = 100;
             break;
         }
         case VIPER_MODULE_MAGIC:
         {
             struct ViperModuleRequest* req = (struct ViperModuleRequest*)requestAddr;
-            BS->AllocatePool(EfiLoaderData, sizeof(struct ViperModuleResponse), (void**)req->response);
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperModuleResponse), (void**)req->response);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error");
             req->response->modules = modules;
             req->response->count = moduleCount;
             break;
@@ -30,9 +34,13 @@ void ParseRequest(void* requestAddr)
         case VIPER_FRAMEBUFFER_MAGIC:
         {
             struct ViperFramebufferRequest* req = (struct ViperFramebufferRequest*)requestAddr;
-            BS->AllocatePool(EfiLoaderData, sizeof(struct ViperFramebufferResponse), (void**)req->response);
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperFramebufferResponse), (void**)req->response);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error");
             struct ViperFramebufferResponse fb = GetFramebuffer();
             memcpy(req->response, &fb, sizeof(struct ViperFramebufferResponse));
+            req->response->base += 0xFFFF800000000000;
+            break;
         }
         default:
             break;

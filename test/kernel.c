@@ -1,13 +1,4 @@
-#include <stdint.h>
-#include "viper.h"
-
-static volatile struct ViperBootInfoRequest bootInfo = {
-    .id = VIPER_BOOT_INFO
-};
-
-static volatile struct ViperModuleRequest modules = {
-    .id = VIPER_MODULE
-};
+#include <viper.h>
 
 static volatile struct ViperFramebufferRequest fbReq = {
     .id = VIPER_FRAMEBUFFER
@@ -21,5 +12,5 @@ int kmain()
     screen[where] = 0xFF;
     screen[where + 1] = 0xFF;
     screen[where + 2] = 0xFF;
-    return bootInfo.response->version;
+    for(;;);
 }

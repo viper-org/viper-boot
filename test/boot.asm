@@ -1,11 +1,12 @@
+;[section .bss]
+;stack_bottom:
+;    resb 0x1000
+;stack_top:
+
 [section .text]
+[extern kmain]
 [global _start]
 _start:
-    [extern kmain]
+    mov rax, 0x6969
     call kmain
     jmp $
-
-[section .data]
-test_req:
-    dq 0x7638c0c9cf567885
-    dq 0x80430eef20c20f7a

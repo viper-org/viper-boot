@@ -55,6 +55,7 @@ struct ViperModuleRequest
 struct ViperFramebufferResponse
 {
     void* base;
+    uint64_t size;
     uint64_t width;
     uint64_t height;
     uint16_t pitch;

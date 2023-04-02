@@ -1,6 +1,8 @@
 #include <request/framebuffer.h>
 #include <lib.h>
 
+struct ViperFramebufferResponse fb;
+
 EFI_GRAPHICS_OUTPUT_PROTOCOL* GetGOP()
 {
     EFI_STATUS status;
@@ -47,8 +49,9 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL* GetGOP()
 struct ViperFramebufferResponse GetFramebuffer()
 {
     EFI_GRAPHICS_OUTPUT_PROTOCOL* gop = GetGOP();
-    return (struct ViperFramebufferResponse) {
-        (void*)gop->Mode->FrameBufferBase, gop->Mode->Info->HorizontalResolution,
+    fb = (struct ViperFramebufferResponse){
+        (void*)gop->Mode->FrameBufferBase, gop->Mode->FrameBufferSize, gop->Mode->Info->HorizontalResolution,
         gop->Mode->Info->VerticalResolution, 4 * gop->Mode->Info->PixelsPerScanLine
     };
+    return fb;
 }

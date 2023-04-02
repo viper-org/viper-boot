@@ -1,11 +1,11 @@
-CC=gcc
-CFLAGS=-nostdlib -ffreestanding -I.
+CC=x86_64-elf-gcc
+CFLAGS=-nostdlib -ffreestanding -I. -O2
 
 AS=nasm
 ASFLAGS=-felf64
 
 LD=x86_64-elf-ld
-LDFLAGS=-nostdlib
+LDFLAGS=-nostdlib -Tlink.ld -zmax-page-size=0x1000
 
 CSRCS=$(shell find . -name '*.c')
 ASSRCS=$(shell find . -name '*.asm')
@@ -44,7 +44,7 @@ run: $(TARGET) ovmf
 	qemu-system-x86_64 -bios ovmf/OVMF.fd -net none -M q35 -M smm=off -d int -drive file=$<,format=raw,if=ide,index=0,media=disk
 
 clean:
-	rm $(OBJS) $(KERNEL) $(TARGET)
+	rm -rf $(OBJS) $(KERNEL) $(TARGET) boot/
 
 distclean:
 	rm -rf ovmf
