@@ -1,7 +1,0 @@
-ovmf/
-boot/
-
-*.EFI
-*.elf
-*.img
-*.o
