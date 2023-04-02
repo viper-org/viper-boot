@@ -6,6 +6,8 @@ extern struct ViperMemmapResponse* MemMap;
 
 void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSize)
 {
+    if(!MemMap)
+        return;
     uint8_t* mmap_start = (uint8_t*)memoryMap;
     uint8_t* mmap_end = (uint8_t*)mmap_start + mapSize;
 
@@ -24,6 +26,7 @@ void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSi
             case EfiBootServicesCode:
             case EfiConventionalMemory:
                 entry->Type = ViperMemmapUsable;
+                break;
             
             case EfiACPIReclaimMemory:
                 entry->Type = ViperMemmapAcpiReclaimable;
@@ -38,6 +41,7 @@ void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSi
 
         entry->NumberOfPages *= PAGE_SIZE;
     }
+
     MemMap->count = mapSize / descSize;
     MemMap->entries = (struct ViperMemmapEntry**)&memoryMap;
 }

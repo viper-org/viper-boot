@@ -73,7 +73,7 @@ struct ViperFramebufferRequest
 #define VIPER_MEMMAP_MAGIC 0x3804de92f9e0c569
 #define VIPER_MEMMAP { VIPER_MAGIC, VIPER_MEMMAP_MAGIC }
 
-enum ViperMemmapType : uint32_t
+enum ViperMemmapType
 {
     ViperMemmapUsable,
     ViperMemmapReserved,

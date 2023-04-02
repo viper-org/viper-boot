@@ -4,7 +4,7 @@ static volatile struct ViperFramebufferRequest fbReq = {
     .id = VIPER_FRAMEBUFFER
 };
 
-int kmain()
+void _start()
 {
     struct ViperFramebufferResponse* fb = fbReq.response;
     unsigned char* screen = (unsigned char*)fb->base;
