@@ -79,7 +79,8 @@ enum ViperMemmapType
     ViperMemmapReserved,
     ViperMemmapBootloaderReclaimable,
     ViperMemmapAcpiNvs,
-    ViperMemmapAcpiReclaimable
+    ViperMemmapAcpiReclaimable,
+    ViperMemmapKernelModules
 };
 
 struct ViperMemmapEntry
