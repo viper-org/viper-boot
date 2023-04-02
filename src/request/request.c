@@ -83,7 +83,7 @@ void AddModule(CHAR16* fileName)
     FILE file = ReadFile(IH, fileName);
 
     char* buf;
-    BS->AllocatePool(EfiLoaderData, strlenw(fileName) * sizeof(char), (void**)&buf);
+    BS->AllocatePool(EfiLoaderData, strlenw(fileName) * sizeof(char) + 1, (void**)&buf);
     for(int i = 0; i < strlenw(fileName); i++)
         buf[i] = fileName[i];
 
