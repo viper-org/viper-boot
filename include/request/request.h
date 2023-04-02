@@ -4,4 +4,6 @@
 
 void ParseRequest(void* requestAddr);
 
+void AddModule(CHAR16* fileName);
+
 #endif

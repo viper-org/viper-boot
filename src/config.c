@@ -1,5 +1,6 @@
 #include <config.h>
 #include <lib.h>
+#include <request/request.h>
 
 ConfigInfo ParseCfg(FILE ConfigFile)
 {
@@ -52,8 +53,10 @@ ConfigInfo ParseCfg(FILE ConfigFile)
         while(*cfg == '\n' || *cfg == ' ' || *cfg == '\t')
             cfg++;
         
-        if(!strcmp(key, L"KERNEL"))
-            strcpy(kernel, value);
+        if(!strcmpw(key, L"KERNEL"))
+            strcpyw(kernel, value);
+        if(!strcmpw(key, L"MODULE"))
+            AddModule(value);
     }
     return (ConfigInfo){name, kernel};
 }

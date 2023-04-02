@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-nostdlib -ffreestanding
+CFLAGS=-nostdlib -ffreestanding -I.
 
 AS=nasm
 ASFLAGS=-felf64
@@ -36,7 +36,7 @@ $(KERNEL): $(OBJS)
 $(TARGET): $(KERNEL) loader
 	cp ../BOOTX64.EFI ../build ./
 	mkdir -p boot
-	cp ./viper.cfg $< boot/
+	cp ./viper.cfg testmod.txt $< boot/
 	./build boot
 
 .PHONY: run clean distclean

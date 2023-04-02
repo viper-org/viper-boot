@@ -9,6 +9,7 @@ typedef void(*EntryPoint)();
 EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {
     ST = SystemTable;
+    IH = ImageHandle;
     BS = SystemTable->BootServices;
     RS = SystemTable->RuntimeServices;
 

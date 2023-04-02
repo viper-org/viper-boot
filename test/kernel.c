@@ -1,27 +1,25 @@
 #include <stdint.h>
-struct BootInfo
-{
-    char* Name;
-    uint64_t Version;
+#include "viper.h"
+
+static volatile struct ViperBootInfoRequest bootInfo = {
+    .id = VIPER_BOOT_INFO
 };
 
-struct BootInfoRequest
-{
-    uint64_t id[3];
-    struct BootInfo* response;
+static volatile struct ViperModuleRequest modules = {
+    .id = VIPER_MODULE
 };
-#define VIPER_MAGIC 0x7638c0c9cf567885, 0x80430eef20c20f7a
 
-
-// Bootloader information
-
-#define BOOT_INFO_MAGIC 0x45e5fb847b93fb1b
-#define BOOT_INFO { VIPER_MAGIC, BOOT_INFO_MAGIC }
-static volatile struct BootInfoRequest bootInfo = {
-    .id = BOOT_INFO
+static volatile struct ViperFramebufferRequest fbReq = {
+    .id = VIPER_FRAMEBUFFER
 };
 
 int kmain()
 {
-    return bootInfo.response->Version;
+    struct ViperFramebufferResponse* fb = fbReq.response;
+    unsigned char* screen = (unsigned char*)fb->base;
+    unsigned int where = 50 * 4 + 50 * fb->pitch;
+    screen[where] = 0xFF;
+    screen[where + 1] = 0xFF;
+    screen[where + 2] = 0xFF;
+    return bootInfo.response->version;
 }
