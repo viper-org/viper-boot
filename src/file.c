@@ -43,9 +43,7 @@ UINT64 FileSize(EFI_FILE_HANDLE FileHandle)
 
     Status = FileHandle->GetInfo(FileHandle, &FileInfoGuid, &FileInfoSize, FileInfo);
     if(Status == EFI_BUFFER_TOO_SMALL)
-    {
         FileHandle->GetInfo(FileHandle, &FileInfoGuid, &FileInfoSize, FileInfo);
-    }
 
     return FileInfo->FileSize;
 }

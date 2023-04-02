@@ -37,7 +37,7 @@ KernelInfo ParseKernel(FILE f)
         if(SHdr->sh_type != SHT_PROGBITS)
             continue;
 
-        void* addr = (void*)(f.Buffer + SHdr->sh_offset);
+        void* addr = (void*)(SHdr->sh_addr - 0xFFFFFFFF80000000 + KernelStart);
         for(UINTN j = 0; j < SHdr->sh_size; j++, addr++)
         {
             if(!memcmp(addr, viperMagic, 2 * sizeof(UINT64)))
