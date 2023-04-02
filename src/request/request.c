@@ -19,7 +19,7 @@ void ParseRequest(void* requestAddr)
             struct ViperBootInfoRequest* req = (struct ViperBootInfoRequest*)requestAddr;
             EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperBootInfoResponse), (void**)req->response);
             if(EFI_ERROR(status))
-                ST->ConOut->OutputString(ST->ConOut, L"Error");
+                ST->ConOut->OutputString(ST->ConOut, L"Error initializing boot information");
             req->response->version = 100;
             break;
         }
@@ -28,7 +28,7 @@ void ParseRequest(void* requestAddr)
             struct ViperModuleRequest* req = (struct ViperModuleRequest*)requestAddr;
             EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperModuleResponse), (void**)req->response);
             if(EFI_ERROR(status))
-                ST->ConOut->OutputString(ST->ConOut, L"Error");
+                ST->ConOut->OutputString(ST->ConOut, L"Error initializing modules");
             req->response->modules = modules;
             req->response->count = moduleCount;
             break;
@@ -38,7 +38,7 @@ void ParseRequest(void* requestAddr)
             struct ViperFramebufferRequest* req = (struct ViperFramebufferRequest*)requestAddr;
             EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperFramebufferResponse), (void**)req->response);
             if(EFI_ERROR(status))
-                ST->ConOut->OutputString(ST->ConOut, L"Error");
+                ST->ConOut->OutputString(ST->ConOut, L"Error initializing framebuffer");
             struct ViperFramebufferResponse fb = GetFramebuffer();
             memcpy(req->response, &fb, sizeof(struct ViperFramebufferResponse));
             req->response->base += 0xFFFF800000000000;
@@ -49,7 +49,7 @@ void ParseRequest(void* requestAddr)
             struct ViperMemmapRequest* req = (struct ViperMemmapRequest*)requestAddr;
             EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperMemmapResponse), (void**)req->response);
             if(EFI_ERROR(status))
-                ST->ConOut->OutputString(ST->ConOut, L"Error");
+                ST->ConOut->OutputString(ST->ConOut, L"Error initialzing memory map");
             MemMap = req->response;
         }
         default:

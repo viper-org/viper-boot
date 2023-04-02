@@ -1,6 +1,6 @@
 #ifndef ELF_H
 #define ELF_H
-#include <efi.h>
+#include <efi/efi.h>
 #include <file.h>
 
 typedef struct

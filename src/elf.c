@@ -14,16 +14,12 @@ KernelInfo ParseKernel(FILE f)
     BS->AllocatePool(EfiLoaderData, f.Size, &KernelLocation);
     EFI_PHYSICAL_ADDRESS KernelStart = (EFI_PHYSICAL_ADDRESS)KernelLocation & ~0xFFF;
     EFI_PHYSICAL_ADDRESS KernelEnd = KernelStart;
-    //EFI_PHYSICAL_ADDRESS KernelStart = (EFI_PHYSICAL_ADDRESS)PHdr->p_vaddr;
-    //EFI_PHYSICAL_ADDRESS KernelEnd = KernelStart;
     for(UINT32 i = 0; i < EHdr->e_phnum; i++, PHdr++)
     {
-        ST->ConOut->OutputString(ST->ConOut, L"tesT");
         if(PHdr->p_type != PT_LOAD)
             continue;
 
         UINT8* VirtualAddr = (UINT8*)(PHdr->p_vaddr - 0xFFFFFFFF80000000 + KernelStart);
-        ST->ConOut->OutputString(ST->ConOut, L"tesT");
         UINT8* HdrOffset = f.Buffer + PHdr->p_offset;
         for(UINTN j = 0; j < PHdr->p_filesz; j++)
             *(VirtualAddr + j) = *(HdrOffset + j);

@@ -42,8 +42,9 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL* GetGOP()
             }
         }
     }
-    ST->ConOut->OutputString(ST->ConOut, L"Unable to find suitable GOP mode");
-    for(;;);
+    return GOP;
+    //ST->ConOut->OutputString(ST->ConOut, L"Unable to find suitable GOP mode");
+    //for(;;);
 }
 
 struct ViperFramebufferResponse GetFramebuffer()
