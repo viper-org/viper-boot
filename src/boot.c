@@ -5,6 +5,7 @@
 #include <config.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
+#include <request/memmap.h>
 
 typedef void(*EntryPoint)();
 
@@ -36,6 +37,8 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 
     PMMInit(MemoryMap, MapSize, DescSize);
     VMMInit(MemoryMap, MapSize, DescSize, Kernel.Start, Kernel.End);
+
+    InitMemoryMap(MemoryMap, MapSize, DescSize);
 
     void* KernelStack = PMMGetPage();
     asm volatile("mov %0, %%rsp" : : "m"(KernelStack));

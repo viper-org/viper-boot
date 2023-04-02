@@ -67,4 +67,41 @@ struct ViperFramebufferRequest
     struct ViperFramebufferResponse* response;
 };
 
+
+// Memory map
+
+#define VIPER_MEMMAP_MAGIC 0x3804de92f9e0c569
+#define VIPER_MEMMAP { VIPER_MAGIC, VIPER_MEMMAP_MAGIC }
+
+enum ViperMemmapType : uint32_t
+{
+    ViperMemmapUsable,
+    ViperMemmapReserved,
+    ViperMemmapBootloaderReclaimable,
+    ViperMemmapAcpiNvs,
+    ViperMemmapAcpiReclaimable
+};
+
+struct ViperMemmapEntry
+{
+    enum ViperMemmapType type;
+    uint32_t reserved;
+    uint64_t base;
+    uint64_t reserved0;
+    uint64_t size;
+    uint64_t reserved1;
+};
+
+struct ViperMemmapResponse
+{
+    uint64_t count;
+    struct ViperMemmapEntry** entries;
+};
+
+struct ViperMemmapRequest
+{
+    uint64_t id[3];
+    struct ViperMemmapResponse* response;
+};
+
 #endif

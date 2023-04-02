@@ -7,6 +7,8 @@
 struct ViperModule* modules = NULL;
 uint8_t moduleCount = 0;
 
+struct ViperMemmapResponse* MemMap = NULL;
+
 void ParseRequest(void* requestAddr)
 {
     UINT64* id = (UINT64*)requestAddr;
@@ -41,6 +43,14 @@ void ParseRequest(void* requestAddr)
             memcpy(req->response, &fb, sizeof(struct ViperFramebufferResponse));
             req->response->base += 0xFFFF800000000000;
             break;
+        }
+        case VIPER_MEMMAP_MAGIC:
+        {
+            struct ViperMemmapRequest* req = (struct ViperMemmapRequest*)requestAddr;
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperMemmapResponse), (void**)req->response);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error");
+            MemMap = req->response;
         }
         default:
             break;
