@@ -12,55 +12,67 @@ void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSi
         return;
     uint8_t* mmap_start = (uint8_t*)memoryMap;
     uint8_t* mmap_end = (uint8_t*)mmap_start + mapSize;
-    uint32_t mapCount = 0;
+    uint32_t mapCount = mapSize / descSize;
 
-    for(uint8_t* offset = mmap_start; offset < mmap_end; offset += descSize, mapCount++)
+    struct ViperMemmapEntry* map = PMMGetPages(NPAGES(mapCount * sizeof(struct ViperMemmapEntry)));
+    void* mapEnd = map + (mapCount * sizeof(struct ViperMemmapEntry));
+
+
+    for(uint8_t* offset = mmap_start, i = 0; offset < mmap_end; offset += descSize, i++)
     {
-        EFI_MEMORY_DESCRIPTOR* entry = (EFI_MEMORY_DESCRIPTOR*)offset;
+        EFI_MEMORY_DESCRIPTOR* efiEntry = (EFI_MEMORY_DESCRIPTOR*)offset;
+        struct ViperMemmapEntry* entry = map + i;
 
         for(uint8_t i = 0; i < moduleCount; i++)
         {
-            if(entry->PhysicalStart >= (uint64_t)modules[i].address && entry->PhysicalStart + entry->NumberOfPages * PAGE_SIZE <= (uint64_t)modules[i].address + modules[i].size)
+            if(efiEntry->PhysicalStart >= (uint64_t)modules[i].address && efiEntry->PhysicalStart + efiEntry->NumberOfPages * PAGE_SIZE <= (uint64_t)modules[i].address + modules[i].size)
             {
-                entry->Type = ViperMemmapKernelModules;
+                entry->type = ViperMemmapKernelModules;
                 goto loop_end;
             }
         }
 
-        if(entry->PhysicalStart >= kernelStart && entry->PhysicalStart + entry->NumberOfPages * PAGE_SIZE <= kernelEnd)
+        if(efiEntry->PhysicalStart >= kernelStart && efiEntry->PhysicalStart + efiEntry->NumberOfPages * PAGE_SIZE <= kernelEnd)
         {
-            entry->Type = ViperMemmapKernelModules;
+            entry->type = ViperMemmapKernelModules;
             goto loop_end;
         }
 
-        switch(entry->Type)
+        if(efiEntry->PhysicalStart >= (uint64_t)map && efiEntry->PhysicalStart + efiEntry->NumberOfPages * PAGE_SIZE <= (uint64_t)mapEnd)
+        {
+            entry->type = ViperMemmapBootloaderReclaimable;
+            goto loop_end;
+        }
+
+        switch(efiEntry->Type)
         {
             case EfiLoaderData:
             case EfiLoaderCode:
-                entry->Type = ViperMemmapBootloaderReclaimable;
+                entry->type = ViperMemmapBootloaderReclaimable;
                 break;
 
             case EfiBootServicesData:
             case EfiBootServicesCode:
             case EfiConventionalMemory:
-                entry->Type = ViperMemmapUsable;
+                entry->type = ViperMemmapUsable;
                 break;
             
             case EfiACPIReclaimMemory:
-                entry->Type = ViperMemmapAcpiReclaimable;
+                entry->type = ViperMemmapAcpiReclaimable;
                 break;
             case EfiACPIMemoryNVS:
-                entry->Type = ViperMemmapAcpiNvs;
+                entry->type = ViperMemmapAcpiNvs;
                 break;
             default:
-                entry->Type = ViperMemmapReserved;
+                entry->type = ViperMemmapReserved;
                 break;
         }
 loop_end:
 
-        entry->NumberOfPages *= PAGE_SIZE;
+        entry->size = efiEntry->NumberOfPages * PAGE_SIZE;
+        entry->base = efiEntry->PhysicalStart;
     }
 
     MemMap->count = mapCount;
-    MemMap->entries = (struct ViperMemmapEntry*)memoryMap;
+    MemMap->entries = map;
 }

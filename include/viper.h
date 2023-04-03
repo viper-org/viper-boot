@@ -86,12 +86,8 @@ enum ViperMemmapType
 struct ViperMemmapEntry
 {
     enum ViperMemmapType type;
-    uint32_t reserved;
     uint64_t base;
-    uint64_t reserved0;
     uint64_t size;
-    uint64_t reserved1;
-    uint64_t reserved2;
 };
 
 struct ViperMemmapResponse
