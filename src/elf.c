@@ -20,6 +20,7 @@ KernelInfo ParseKernel(FILE f)
     BS->AllocatePool(EfiLoaderData, kernelSize, &KernelLocation);
     EFI_PHYSICAL_ADDRESS KernelStart = (EFI_PHYSICAL_ADDRESS)KernelLocation & ~0xFFF;
     EFI_PHYSICAL_ADDRESS KernelEnd = KernelStart;
+    
     for(UINT32 i = 0; i < EHdr->e_phnum; i++, PHdr++)
     {
         if(PHdr->p_type != PT_LOAD)
@@ -36,6 +37,10 @@ KernelInfo ParseKernel(FILE f)
         KernelEnd += PHdr->p_memsz;
     }
 
+    KernelInfo info = {
+        EHdr->e_entry, KernelStart, KernelEnd
+    };
+
     // Parse requests
     UINT64 viperMagic[2] = {VIPER_MAGIC};
     for(UINT32 i = 0; i < EHdr->e_shnum; i++, SHdr++)
@@ -47,8 +52,8 @@ KernelInfo ParseKernel(FILE f)
         for(UINTN j = 0; j < SHdr->sh_size; j++, addr++)
         {
             if(!memcmp(addr, viperMagic, 2 * sizeof(UINT64)))
-                ParseRequest(addr);
+                ParseRequest(addr, info);
         }
     }
-    return (KernelInfo){EHdr->e_entry, KernelStart, KernelEnd};
+    return info;
 }

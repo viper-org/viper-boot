@@ -102,4 +102,23 @@ struct ViperMemmapRequest
     struct ViperMemmapResponse* response;
 };
 
+
+// Kernel location
+
+#define VIPER_KERNEL_LOCATION_MAGIC 0xc8ce8f3e3d18804e
+#define VIPER_KERNEL_LOCATION { VIPER_MAGIC, VIPER_KERNEL_LOCATION_MAGIC }
+
+struct ViperKernelLocationResponse
+{
+    void* physicalBase;
+    void* virtualBase;
+    uint64_t size;
+};
+
+struct ViperKernelLocationRequest
+{
+    uint64_t id[3];
+    struct ViperKernelLocationResponse* response;
+};
+
 #endif

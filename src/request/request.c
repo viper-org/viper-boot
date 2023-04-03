@@ -11,7 +11,7 @@ struct ViperMemmapResponse* MemMap = NULL;
 
 struct ViperModuleResponse ModuleResponse;
 
-void ParseRequest(void* requestAddr)
+void ParseRequest(void* requestAddr, KernelInfo info)
 {
     UINT64* id = (UINT64*)requestAddr;
     switch(*(id + 2))
@@ -81,6 +81,25 @@ void ParseRequest(void* requestAddr)
 
             addr += 0xFFFF800000000000;
             req->response = addr;
+            break;
+        }
+        case VIPER_KERNEL_LOCATION_MAGIC:
+        {
+            struct ViperKernelLocationRequest* req = (struct ViperKernelLocationRequest*)requestAddr;
+            
+            void* addr;
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperKernelLocationResponse), &addr);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error initialzing memory map");
+            req->response = addr;
+
+            req->response->physicalBase = (void*)info.Start;
+            req->response->virtualBase  = (void*)0xFFFFFFFF80000000;
+            req->response->size         = info.End - info.Start;
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
+            break;
         }
         default:
             break;
