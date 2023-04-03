@@ -10,8 +10,14 @@ KernelInfo ParseKernel(FILE f)
     Elf64_Phdr* PHdr = (Elf64_Phdr*)(f.Buffer + EHdr->e_phoff);
     Elf64_Shdr* SHdr = (Elf64_Shdr*)(f.Buffer + EHdr->e_shoff);
 
+    uint64_t kernelSize = 0;
+    for(UINT32 i = 0; i < EHdr->e_phnum; i++, PHdr++)
+        kernelSize += PHdr->p_memsz;
+    
+    PHdr = (Elf64_Phdr*)(f.Buffer + EHdr->e_phoff);
+
     void* KernelLocation = NULL;
-    BS->AllocatePool(EfiLoaderData, f.Size, &KernelLocation);
+    BS->AllocatePool(EfiLoaderData, kernelSize, &KernelLocation);
     EFI_PHYSICAL_ADDRESS KernelStart = (EFI_PHYSICAL_ADDRESS)KernelLocation & ~0xFFF;
     EFI_PHYSICAL_ADDRESS KernelEnd = KernelStart;
     for(UINT32 i = 0; i < EHdr->e_phnum; i++, PHdr++)

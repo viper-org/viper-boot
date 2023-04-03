@@ -91,6 +91,7 @@ struct ViperMemmapEntry
     uint64_t reserved0;
     uint64_t size;
     uint64_t reserved1;
+    uint64_t reserved2;
 };
 
 struct ViperMemmapResponse
