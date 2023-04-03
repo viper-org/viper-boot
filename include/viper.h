@@ -96,7 +96,7 @@ struct ViperMemmapEntry
 struct ViperMemmapResponse
 {
     uint64_t count;
-    struct ViperMemmapEntry** entries;
+    struct ViperMemmapEntry* entries;
 };
 
 struct ViperMemmapRequest

@@ -12,8 +12,9 @@ void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSi
         return;
     uint8_t* mmap_start = (uint8_t*)memoryMap;
     uint8_t* mmap_end = (uint8_t*)mmap_start + mapSize;
+    uint32_t mapCount = 0;
 
-    for(uint8_t* offset = mmap_start; offset < mmap_end; offset += descSize)
+    for(uint8_t* offset = mmap_start; offset < mmap_end; offset += descSize, mapCount++)
     {
         EFI_MEMORY_DESCRIPTOR* entry = (EFI_MEMORY_DESCRIPTOR*)offset;
 
@@ -60,6 +61,6 @@ loop_end:
         entry->NumberOfPages *= PAGE_SIZE;
     }
 
-    MemMap->count = mapSize / descSize;
-    MemMap->entries = (struct ViperMemmapEntry**)&memoryMap;
+    MemMap->count = mapCount;
+    MemMap->entries = (struct ViperMemmapEntry*)memoryMap;
 }
