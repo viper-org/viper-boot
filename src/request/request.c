@@ -27,6 +27,9 @@ void ParseRequest(void* requestAddr)
             req->response = addr;
 
             req->response->version = 100;
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
             break;
         }
         case VIPER_MODULE_MAGIC:
@@ -41,6 +44,9 @@ void ParseRequest(void* requestAddr)
 
             req->response->modules = modules;
             req->response->count = moduleCount;
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
             break;
         }
         case VIPER_FRAMEBUFFER_MAGIC:
@@ -56,6 +62,9 @@ void ParseRequest(void* requestAddr)
             struct ViperFramebufferResponse fb = GetFramebuffer();
             memcpy(req->response, &fb, sizeof(struct ViperFramebufferResponse));
             req->response->base += 0xFFFF800000000000;
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
             break;
         }
         case VIPER_MEMMAP_MAGIC:
@@ -69,6 +78,9 @@ void ParseRequest(void* requestAddr)
             req->response = addr;
             
             MemMap = req->response;
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
         }
         default:
             break;
@@ -87,5 +99,5 @@ void AddModule(CHAR16* fileName)
     for(int i = 0; i < strlenw(fileName); i++)
         buf[i] = fileName[i];
 
-    modules[moduleCount++] = (struct ViperModule){file.Buffer, file.Size, buf};
+    modules[moduleCount++] = (struct ViperModule){file.Buffer + 0xFFFF800000000000, file.Size, buf + 0xFFFF800000000000};
 }

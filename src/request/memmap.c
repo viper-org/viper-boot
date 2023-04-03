@@ -70,9 +70,9 @@ void InitMemoryMap(EFI_MEMORY_DESCRIPTOR* memoryMap, UINTN mapSize, UINTN descSi
 loop_end:
 
         entry->size = efiEntry->NumberOfPages * PAGE_SIZE;
-        entry->base = efiEntry->PhysicalStart;
+        entry->base = efiEntry->PhysicalStart + 0xFFFF800000000000;
     }
 
     MemMap->count = mapCount;
-    MemMap->entries = map;
+    MemMap->entries = (struct ViperMemmapEntry*)((unsigned char*)map + 0xFFFF800000000000);
 }
