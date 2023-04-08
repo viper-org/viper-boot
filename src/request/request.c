@@ -42,7 +42,7 @@ void ParseRequest(void* requestAddr, KernelInfo info)
                 ST->ConOut->OutputString(ST->ConOut, L"Error initializing modules");
             req->response = addr;
 
-            req->response->modules = modules;
+            req->response->modules = (void*)modules + 0xFFFF800000000000;
             req->response->count = moduleCount;
 
             addr += 0xFFFF800000000000;
