@@ -38,7 +38,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     PMMInit(MemoryMap, MapSize, DescSize);
     VMMInit(MemoryMap, MapSize, DescSize, Kernel.Start, Kernel.End);
 
-    void* KernelStack = PMMGetPage();
+    void* KernelStack = PMMGetPage() + 0xFFFF800000000000;
     asm volatile("mov %0, %%rsp" : : "m"(KernelStack));
 
     InitMemoryMap(MemoryMap, MapSize, DescSize, Kernel.Start, Kernel.End);
