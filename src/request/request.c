@@ -121,9 +121,9 @@ void ParseRequest(void* requestAddr, KernelInfo info)
             for(UINTN i = 0; i < ST->NumberOfTableEntries; i++)
             {
                 if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp2, sizeof(EFI_GUID)))
-                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable;
+                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
                 else if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp1, sizeof(EFI_GUID)))
-                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable;
+                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
             }
             break;
         }
