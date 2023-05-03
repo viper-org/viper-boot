@@ -125,6 +125,10 @@ void ParseRequest(void* requestAddr, KernelInfo info)
                 else if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp1, sizeof(EFI_GUID)))
                     req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
             }
+
+            addr += 0xFFFF800000000000;
+            req->response = addr;
+
             break;
         }
         default:
