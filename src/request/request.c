@@ -90,7 +90,7 @@ void ParseRequest(void* requestAddr, KernelInfo info)
             void* addr;
             EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperKernelLocationResponse), &addr);
             if(EFI_ERROR(status))
-                ST->ConOut->OutputString(ST->ConOut, L"Error initialzing memory map");
+                ST->ConOut->OutputString(ST->ConOut, L"Error initializing memory map");
             req->response = addr;
 
             req->response->physicalBase = (void*)info.Start;
@@ -99,6 +99,32 @@ void ParseRequest(void* requestAddr, KernelInfo info)
 
             addr += 0xFFFF800000000000;
             req->response = addr;
+            break;
+        }
+        case VIPER_RSDP_MAGIC:
+        {
+            struct ViperRSDPRequest* req = (struct ViperRSDPRequest*)requestAddr;
+
+            void* addr;
+            EFI_STATUS status = BS->AllocatePool(EfiLoaderData, sizeof(struct ViperRSDPResponse), &addr);
+            if(EFI_ERROR(status))
+                ST->ConOut->OutputString(ST->ConOut, L"Error getting RSDP");
+            req->response = addr;
+
+            EFI_GUID rsdp2 = {
+                0x8868e871, 0xe4f1, 0x11d3, { 0xbc, 0x22, 0x00, 0x80, 0xc7, 0x3c, 0x88, 0x81 }
+            };
+            EFI_GUID rsdp1 = {
+                0xeb9d2d30, 0x2d88, 0x11d3, { 0x9a, 0x16, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d }
+            };
+
+            for(UINTN i = 0; i < ST->NumberOfTableEntries; i++)
+            {
+                if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp2, sizeof(EFI_GUID)))
+                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable;
+                else if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp1, sizeof(EFI_GUID)))
+                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable;
+            }
             break;
         }
         default:

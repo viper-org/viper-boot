@@ -121,4 +121,21 @@ struct ViperKernelLocationRequest
     struct ViperKernelLocationResponse* response;
 };
 
+
+// RSDP
+
+#define VIPER_RSDP_MAGIC 0x7dc5e2feb8b64329
+#define VIPER_RSDP { VIPER_MAGIC, VIPER_RSDP_MAGIC }
+
+struct ViperRSDPResponse
+{
+    void* rsdp;
+};
+
+struct ViperRSDPRequest
+{
+    uint64_t id[3];
+    struct ViperRSDPResponse* response;
+};
+
 #endif
