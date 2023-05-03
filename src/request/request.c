@@ -111,6 +111,8 @@ void ParseRequest(void* requestAddr, KernelInfo info)
                 ST->ConOut->OutputString(ST->ConOut, L"Error getting RSDP");
             req->response = addr;
 
+            req->response->rsdp = NULL;
+
             EFI_GUID rsdp2 = {
                 0x8868e871, 0xe4f1, 0x11d3, { 0xbc, 0x22, 0x00, 0x80, 0xc7, 0x3c, 0x88, 0x81 }
             };
@@ -120,10 +122,22 @@ void ParseRequest(void* requestAddr, KernelInfo info)
 
             for(UINTN i = 0; i < ST->NumberOfTableEntries; i++)
             {
-                if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp2, sizeof(EFI_GUID)))
+                if(!memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp2, sizeof(EFI_GUID)))
+                {
                     req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
-                else if(memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp1, sizeof(EFI_GUID)))
-                    req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
+                    break;
+                }
+            }
+            if(req->response->rsdp == NULL)
+            {
+                for(UINTN i = 0; i < ST->NumberOfTableEntries; i++)
+                {
+                    if(!memcmp(&ST->ConfigurationTable[i].VendorGuid, &rsdp1, sizeof(EFI_GUID)))
+                    {
+                        req->response->rsdp = ST->ConfigurationTable[i].VendorTable + 0xFFFF800000000000;
+                        break;
+                    }
+                }
             }
 
             addr += 0xFFFF800000000000;
