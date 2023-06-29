@@ -66,7 +66,7 @@ all: $(TARGET) $(BUILD)
 limine-efi:
 	git clone https://github.com/limine-bootloader/limine-efi.git
 
-limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o: limine-efi
+limine-efi/gnuefi/crt0-efi-x86_64.S.o limine-efi/gnuefi/reloc_x86_64.c.o: limine-efi
 	$(MAKE) -C limine-efi/gnuefi ARCH=x86_64
 
 $(BUILD): build.cpp
@@ -75,7 +75,7 @@ $(BUILD): build.cpp
 $(TARGET): $(ELF)
 	$(OBJCOPY) -O binary $< $@
 
-$(ELF): limine-efi/gnuefi/crt0-efi-x86_64.o limine-efi/gnuefi/reloc_x86_64.o $(OBJ)
+$(ELF): limine-efi/gnuefi/crt0-efi-x86_64.S.o limine-efi/gnuefi/reloc_x86_64.c.o $(OBJ)
 	$(LD) $^ $(LDFLAGS) -o $@
 
 -include $(HEADER_DEPS)
